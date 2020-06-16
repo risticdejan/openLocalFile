@@ -1,0 +1,67 @@
+{
+	"extension_title": {
+		"message": "Open local file",
+		"description": "The title of the application, displayed in the web store."
+	},
+	"extension_description": {
+		"message": "This extension helps you open the local file after clicking the link to the local file.",
+		"description": "The description of the application, displayed in the web store."
+	},
+	"not_found_title": {
+		"message": "File not found"
+	},
+	"not_found_message": {
+		"message": "There isn't $path$ file.",
+		"placeholders": {
+			"path": {
+				"content": "$1",
+				"example": "C:/path_to_file"
+			}
+		}
+	},
+	"error_title": {
+		"message": "Error"
+	},
+	"error_description": {
+		"message": "Make sure Python is installed and the application is installed"
+	},
+	"not_installed_title": {
+		"message": "Application not installed"
+	},
+	"not_installed_message": {
+		"message": "Instructions for installing the application can be found in the drop-down menu."
+	},
+	"popup_instruction": {
+		"message": "Instruction"
+	},
+	"popup_item_1": {
+		"message": "Download the application from this link, <a href='$path$'>download setup.exe</a>",
+		"placeholders": {
+			"path": {
+				"content": "$1",
+				"example": "/host-app-src/setup.exe"
+			}
+		}
+	},
+	"popup_item_2": {
+		"message": "Run the downloaded application (setup.exe)"
+	},
+	"popup_item_3": {
+		"message": "The extension opens the local file in the corresponding program when the link to the local file is clicked"
+	},
+	"popup_item_1_linux": {
+		"message": "Download the application from this link, <a href='$path$'>download setup.tar.xz</a>",
+		"placeholders": {
+			"path": {
+				"content": "$1",
+				"example": "/host-app-src/setup.tar.xz"
+			}
+		}
+	},
+	"popup_item_2_linux": {
+		"message": "Unpack setup.tar.kz and move the content where it suits you and then run instal_host.sh"
+	},
+	"popup_unknown_os": {
+		"message": "The extension is not supported on your operating system"
+	}
+}

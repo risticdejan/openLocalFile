@@ -1,0 +1,67 @@
+{
+  "extension_title": {
+    "message": "Open local file",
+    "description": "Наслов апликације."
+  },
+  "extension_description": {
+    "message": "Ova екстензија вам помаже да отворите локалну датотеку након што кликнете на линк до локалне датотеке.",
+    "description": "Опис апликације."
+  },
+  "not_found_title": {
+    "message": "Фајл није пронађен"
+  },
+  "not_found_message": {
+    "message": "Не постоји $path$ датотека",
+    "placeholders": {
+      "path": {
+        "content": "$1",
+        "example": "C:/path_to_file"
+      }
+    }
+  },
+  "error_title": {
+    "message": "Грешка"
+  },
+  "error_description": {
+    "message": "Проверите да ли је пајтон (python) инсталиран и да ли је апликација инсталирана"
+  },
+  "not_installed_title": {
+    "message": "Апликација није инсталирана"
+  },
+  "not_installed_message": {
+    "message": "Упутства за инсталирање апликације можете пронаћи у падајућем менију."
+  },
+  "popup_instruction": {
+    "message": "Упутство"
+  },
+  "popup_item_1": {
+    "message": "Преузмите апликацију са линка, <a href='$path$'>преузмите setup.exe</a>",
+    "placeholders": {
+      "path": {
+        "content": "$1",
+        "example": "/host-app-src/setup.exe"
+      }
+    }
+  },
+  "popup_item_2": {
+    "message": "Покрените преузету апликацију (setup.exe)"
+  },
+  "popup_item_3": {
+    "message": "Екстензија отвара локалну датотеку у одговарајућем програму када се кликне линк до локалне датотеке"
+  },
+  "popup_item_1_linux": {
+    "message": "Преузмите апликацију са линка, <a href='$path$'>преузмите setup.tar.xz</a>",
+    "placeholders": {
+      "path": {
+        "content": "$1",
+        "example": "/host-app-src/setup.tar.xz"
+      }
+    }
+  },
+  "popup_item_2_linux": {
+    "message": "Распакирајте setup.tar.xz и премјестите садржај тамо гдје вам одговара, а затим покрените instal_host.sh"
+  },
+  "popup_unknown_os": {
+    "message": "Екстензија није подржанa у вашем оперативном систему"
+  }
+}

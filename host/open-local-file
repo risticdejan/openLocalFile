@@ -1,0 +1,91 @@
+#!/usr/bin/env python
+# Copyright (c) 2012 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# A simple native messaging host. Shows a Tkinter dialog with incoming messages
+# that also allows to send message back to the webapp.
+
+import platform
+import os
+from os import path
+import json
+import sys
+import struct
+from collections import namedtuple
+
+# Read a message from stdin and decode it.
+
+
+def get_message():
+    raw_length = sys.stdin.read(4)
+    if not raw_length:
+        sys.exit(0)
+    message_length = struct.unpack('=I', raw_length)[0]
+    message = sys.stdin.read(message_length)
+    return json.loads(message, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+
+# Encode a message for transmission, given its content.
+
+
+def encode_message(message_content):
+    encoded_content = json.dumps(message_content)
+    encoded_length = struct.pack('=I', len(encoded_content))
+    return {'length': encoded_length, 'content': encoded_content}
+
+
+# Send an encoded message to stdout.
+def send_message(encoded_message):
+    sys.stdout.write(encoded_message['length'])
+    sys.stdout.write(encoded_message['content'])
+    sys.stdout.flush()
+
+
+def main():
+    message = get_message()
+    ext = os.path.splitext(message.path)[1][1:]
+
+    plt = platform.system()
+    wordList = ['doc', 'docm', 'docx', 'dot', 'dotm',
+                'dotx', 'mhtml', 'mht:', 'odt', 'rtf', 'txt']
+    excelList = ['csv', 'dbf', 'dif', 'ods', 'prn', 'xla', 'xls',
+                 'xlsb', 'xlsm', 'xlsx', 'xlt', 'xltm', 'xltx', 'xlw']
+    powerPointList = ['pot', 'potm',  'potx', 'ppa', 'ppam',
+                      'pps', 'ppsm', 'ppsx', 'ppt', 'pptm', 'pptx']
+    if plt == "Windows":
+        if path.exists(message.path):
+            if ext in wordList:
+                cmd = 'start winword ' + message.path
+            elif ext in excelList:
+                cmd = 'start excel ' + message.path
+            elif ext in powerPointList:
+                cmd = 'start powerpnt ' + message.path
+            else:
+                cmd = 'start explorer ' + message.path
+            os.system(cmd)
+            send_message(encode_message(cmd))
+        else:
+            send_message(encode_message("not found"))
+    elif plt == "Linux":
+        if path.exists('/' + message.path):
+            if ext in wordList:
+                cmd = 'libreoffice /' + message.path
+            elif ext in excelList:
+                cmd = 'libreoffice /' + message.path
+            elif ext in powerPointList:
+                cmd = 'libreoffice /' + message.path
+            else:
+                cmd = 'nautilus /' + message.path
+
+            os.system(cmd)
+            send_message(encode_message(cmd))
+        else:
+            send_message(encode_message("not found"))
+    elif plt == "Darwin":
+        send_message(encode_message(plt))
+    else:
+        send_message(encode_message("Unidentified system"))
+
+
+if __name__ == "__main__":
+    main()
