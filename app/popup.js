@@ -11,20 +11,28 @@ chrome.runtime.getPlatformInfo(function (info) {
     var unknown_os = chrome.i18n.getMessage('popup_unknown_os') || 'The extension is not supported on your operating system';
     // console.log(info.os);
     if (info.os === 'win') {
-        content += '<h1>' + title + '</h1>';
+        content += '<h1> <a id="homelink" href="https://www.paragraf.rs/"> <img src="/images/32.png" /> </a><span>' + title + '<span></h1>';
         content += '<h3>' + instruction + ': </h3>';
         content += '<p> 1. ' + item_1 + ',</p>';
         content += '<p> 2. ' + item_2 + ',</p>';
         content += '<p> 3. ' + item_3 + '.</p>';
     } else if (info.os === 'linux') {
-        content += '<h1>' + title + '</h1>';
+        content += '<h1> <a  id="homelink" href="https://www.paragraf.rs/"> <img src="/images/32.png" /> </a><span>' + title + '<span></h1>';
         content += '<h3>' + instruction + ': </h3>';
         content += '<p> 1. ' + item_1_linux + ',</p>';
         content += '<p> 2. ' + item_2_linux + ',</p>';
         content += '<p> 3. ' + item_3 + '.</p>';
     } else {
-        content += '<h1>' + title + '</h1>';
+        content += '<h1> <a  id="homelink" href="https://www.paragraf.rs/"> <img src="/images/32.png" /> </a><span>' + title + '<span></h1>';
         consent += '<p>' + unknown_os + '.</p>';
     }
     container.innerHTML = content;
+    document.getElementById("homelink").addEventListener("click", goToHome);
 });
+
+
+function goToHome() {
+    console.log(this, 'test');
+    var href = this.getAttribute("href");
+    chrome.tabs.create({ active: true, url: href });
+}
