@@ -11,7 +11,6 @@ const showNotification = info => {
     iconUrl: iconUrl,
     title: info.title,
     message: message,
-    contextMessage: extensionName,
   });
 };
 
