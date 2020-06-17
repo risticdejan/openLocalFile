@@ -40,8 +40,8 @@ const notInstalled = () => {
 
 const showError = () => {
   showNotification({
-    title: chrome.i18n.getMessage("еrror_title"),
-    message: chrome.i18n.getMessage("еrror_description"),
+    title: chrome.i18n.getMessage("error_title"),
+    message: chrome.i18n.getMessage("error_description"),
   });
 }
 
@@ -60,14 +60,14 @@ chrome.runtime.onMessage.addListener((message, sender) => {
       { path: localFilePath },
       (response) => {
         if (chrome.runtime.lastError) {
-          console.log('ERROR: ' + chrome.runtime.lastError.message);
+          // console.log('ERROR: ' + chrome.runtime.lastError.message);
           if (chrome.runtime.lastError.message === 'Specified native messaging host not found.') {
             notInstalled();
           } else {
             showError();
           }
         } else {
-          console.log('Messaging host: ', response);
+          // console.log('Messaging host: ', response);
           if (response === 'not found') {
             notFound(localFilePath);
           }
