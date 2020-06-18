@@ -26,10 +26,10 @@
 		"message": "Make sure Python is installed and the application is installed"
 	},
 	"not_installed_title": {
-		"message": "Application not installed"
+		"message": "Application is not installed"
 	},
 	"not_installed_message": {
-		"message": "Instructions for installing the application can be found in the drop-down menu."
+		"message": "See the instructions in the pop-up menu."
 	},
 	"popup_instruction": {
 		"message": "Instruction"

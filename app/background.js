@@ -47,11 +47,10 @@ const showError = () => {
 const notFound = (path) => {
   showNotification({
     title: chrome.i18n.getMessage("not_found_title"),
-    message: chrome.i18n.getMessage("not_found_message", path),
   });
 }
 
-chrome.runtime.onMessage.addListener((message, sender) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.method === 'openLocalFile') {
     const localFilePath = message.localFileUrl.replace('file:///', '');
     chrome.runtime.sendNativeMessage(
@@ -61,17 +60,23 @@ chrome.runtime.onMessage.addListener((message, sender) => {
         if (chrome.runtime.lastError) {
           // console.log('ERROR: ' + chrome.runtime.lastError.message);
           if (chrome.runtime.lastError.message === 'Specified native messaging host not found.') {
+            sendResponse({ message: 'notInstalled' });
             notInstalled();
           } else {
+            sendResponse({ message: 'error' });
             showError();
           }
         } else {
           // console.log('Messaging host: ', response);
           if (response === 'not found') {
+            sendResponse({ message: 'notFound' });
             notFound(localFilePath);
+          } else {
+            sendResponse({ message: 'success' });
           }
         }
       }
     );
+    return true;
   }
 });
