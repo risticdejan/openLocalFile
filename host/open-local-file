@@ -41,44 +41,68 @@ def send_message(encoded_message):
     sys.stdout.flush()
 
 
-def main():
-    message = get_message()
-    ext = os.path.splitext(message.path)[1][1:]
+def open_local_file_windows(path):
+    ext = os.path.splitext(path)[1][1:]
 
-    plt = platform.system()
     wordList = ['doc', 'docm', 'docx', 'dot', 'dotm',
                 'dotx', 'mhtml', 'mht:', 'odt', 'rtf', 'txt']
     excelList = ['csv', 'dbf', 'dif', 'ods', 'prn', 'xla', 'xls',
                  'xlsb', 'xlsm', 'xlsx', 'xlt', 'xltm', 'xltx', 'xlw']
     powerPointList = ['pot', 'potm',  'potx', 'ppa', 'ppam',
                       'pps', 'ppsm', 'ppsx', 'ppt', 'pptm', 'pptx']
+    if ext in wordList:
+        cmd = 'start winword ' + path
+    elif ext in excelList:
+        cmd = 'start excel ' + path
+    elif ext in powerPointList:
+        cmd = 'start powerpnt ' + path
+    else:
+        cmd = 'start explorer ' + path
+    os.system(cmd)
+    send_message(encode_message(cmd))
+
+
+def open_local_file_linux(path):
+    ext = os.path.splitext(path)[1][1:]
+
+    wordList = ['doc', 'docm', 'docx', 'dot', 'dotm',
+                'dotx', 'mhtml', 'mht:', 'odt', 'rtf', 'txt']
+    excelList = ['csv', 'dbf', 'dif', 'ods', 'prn', 'xla', 'xls',
+                 'xlsb', 'xlsm', 'xlsx', 'xlt', 'xltm', 'xltx', 'xlw']
+    powerPointList = ['pot', 'potm',  'potx', 'ppa', 'ppam',
+                      'pps', 'ppsm', 'ppsx', 'ppt', 'pptm', 'pptx']
+    if ext in wordList:
+        cmd = 'libreoffice /' + path
+    elif ext in excelList:
+        cmd = 'libreoffice /' + path
+    elif ext in powerPointList:
+        cmd = 'libreoffice /' + path
+    else:
+        cmd = 'nautilus /' + path
+
+    os.system(cmd)
+    send_message(encode_message(cmd))
+
+
+def main():
+    message = get_message()
+    plt = platform.system()
     if plt == "Windows":
-        if path.exists(message.path):
-            if ext in wordList:
-                cmd = 'start winword ' + message.path
-            elif ext in excelList:
-                cmd = 'start excel ' + message.path
-            elif ext in powerPointList:
-                cmd = 'start powerpnt ' + message.path
+        first_char = message.path[0]
+        if first_char == '/':
+            local_path = message.path[1:]
+            if path.exists(local_path):
+                open_local_file_windows(local_path)
             else:
-                cmd = 'start explorer ' + message.path
-            os.system(cmd)
-            send_message(encode_message(cmd))
+                send_message(encode_message("not found"))
         else:
-            send_message(encode_message("not found"))
+            if path.exists('//' + message.path):
+                open_local_file_windows('\\\\' + message.path)
+            else:
+                send_message(encode_message("not found"))
     elif plt == "Linux":
         if path.exists('/' + message.path):
-            if ext in wordList:
-                cmd = 'libreoffice /' + message.path
-            elif ext in excelList:
-                cmd = 'libreoffice /' + message.path
-            elif ext in powerPointList:
-                cmd = 'libreoffice /' + message.path
-            else:
-                cmd = 'nautilus /' + message.path
-
-            os.system(cmd)
-            send_message(encode_message(cmd))
+            open_local_file_linux(message.path)
         else:
             send_message(encode_message("not found"))
     elif plt == "Darwin":

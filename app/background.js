@@ -47,12 +47,13 @@ const showError = () => {
 const notFound = (path) => {
   showNotification({
     title: chrome.i18n.getMessage("not_found_title"),
+    // message: path
   });
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.method === 'openLocalFile') {
-    const localFilePath = message.localFileUrl.replace('file:///', '');
+    const localFilePath = message.localFileUrl.replace('file://', '');
     chrome.runtime.sendNativeMessage(
       'open.local.file',
       { path: localFilePath },
