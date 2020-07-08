@@ -59,7 +59,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       { path: localFilePath },
       (response) => {
         if (chrome.runtime.lastError) {
-          console.log('ERROR: ' + chrome.runtime.lastError.message);
+          // console.log('ERROR: ' + chrome.runtime.lastError.message);
           if (chrome.runtime.lastError.message === 'Specified native messaging host not found.') {
             sendResponse({ message: 'notInstalled' });
             notInstalled();
@@ -68,7 +68,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             showError();
           }
         } else {
-          console.log('Messaging host: ', response);
+          // console.log('Messaging host: ', response);
           if (response === 'not found') {
             sendResponse({ message: 'notFound' });
             notFound(localFilePath);
