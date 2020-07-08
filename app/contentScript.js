@@ -7,7 +7,7 @@ document.body.addEventListener('click', (evt) => {
   }
   if (target) {
     const url = decodeURIComponent(target.href);
-    console.log(url);
+    // console.log(url);
     if (url.startsWith('file://')) {
       evt.preventDefault();
       try {
