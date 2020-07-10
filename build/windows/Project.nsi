@@ -47,7 +47,7 @@ ShowUnInstDetails show
 Section "MainSection" SEC01
   SetOutPath "$INSTDIR"
   SetOverwrite try
-  File "application\open-local-file"
+  File "application\open-local-file.exe"
   File "application\open-local-file.bat"
   File "application\open.local.file-win.json"
 SectionEnd
@@ -84,7 +84,7 @@ Section Uninstall
   Delete "$INSTDIR\uninst.exe"
   Delete "$INSTDIR\open.local.file-win.json"
   Delete "$INSTDIR\open-local-file.bat"
-  Delete "$INSTDIR\open-local-file"
+  Delete "$INSTDIR\open-local-file.exe"
 
   Delete "$SMPROGRAMS\OpenLocalFile\Uninstall.lnk"
 
