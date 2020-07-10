@@ -1,8 +1,9 @@
 document.body.addEventListener('click', (evt) => {
+  console.log(evt);
   if (!evt.isTrusted) return;
   let target = evt.target;
 
-  while (target && target.tagName !== 'A') {
+  while (target && (target.tagName !== 'A' || target.tagName !== 'a' ) {
     target = target.parentNode;
   }
   if (target) {
