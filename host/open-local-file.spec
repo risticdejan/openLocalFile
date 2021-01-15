@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['open-local-file'],
-             pathex=['C:\\Users\\dejan\\Documents\\extansions\\openLocalFile\\host'],
+             pathex=['C:\\Users\\dejan\\Documents\\paragraf\\extansions\\openLocalFile\\host'],
              binaries=[],
              datas=[],
              hiddenimports=[],

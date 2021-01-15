@@ -1,0 +1,166 @@
+#!/usr/bin/env python
+# Copyright (c) 2012 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# A simple native messaging host. Shows a Tkinter dialog with incoming messages
+# that also allows to send message back to the webapp.
+
+import platform
+import os
+from os import path
+import json
+import sys
+import struct
+from collections import namedtuple
+
+
+def get_message_v2():
+    raw_length = sys.stdin.read(4)
+    if not raw_length:
+        sys.exit(0)
+    message_length = struct.unpack('=I', raw_length)[0]
+    message = sys.stdin.read(message_length)
+    return json.loads(message, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+
+
+def get_message_v3():
+    text_length_bytes = sys.stdin.buffer.read(4)
+    text_length = struct.unpack("i", text_length_bytes)[0]
+    text_undecoded = sys.stdin.buffer.read(text_length).decode("utf-8")
+    return json.loads(text_undecoded, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))[0]
+
+
+def encode_message(message_content):
+    encoded_content = json.dumps(message_content)
+    encoded_length = struct.pack('=I', len(encoded_content))
+    return {'length': encoded_length, 'content': encoded_content}
+
+
+def send_message_v2(encoded_message):
+    sys.stdout.write(encoded_message['length'])
+    sys.stdout.write(encoded_message['content'])
+    sys.stdout.flush()
+
+
+def send_message_v3(MSG_DICT):
+    msg_json = json.dumps(MSG_DICT, separators=(",", ":"))
+    msg_json_utf8 = msg_json.encode("utf-8")
+    sys.stdout.buffer.write(struct.pack("i", len(msg_json_utf8)))
+    sys.stdout.buffer.write(msg_json_utf8)
+
+
+def open_local_file_windows(path):
+    ext = os.path.splitext(path)[1][1:]
+
+    wordList = ['doc', 'docm', 'docx', 'dot', 'dotm',
+                'dotx', 'mhtml', 'mht:', 'odt', 'rtf', 'txt']
+    excelList = ['csv', 'dbf', 'dif', 'ods', 'prn', 'xla', 'xls',
+                 'xlsb', 'xlsm', 'xlsx', 'xlt', 'xltm', 'xltx', 'xlw']
+    powerPointList = ['pot', 'potm',  'potx', 'ppa', 'ppam',
+                      'pps', 'ppsm', 'ppsx', 'ppt', 'pptm', 'pptx']
+    pdfList = ['pdf']
+    if ext in wordList:
+        cmd = 'start "" "' + path + '"'
+    elif ext in excelList:
+        cmd = 'start excel "' + path + '"'
+    elif ext in powerPointList:
+        cmd = 'start "" "' + path + '"'
+    elif ext in pdfList:
+        cmd = 'start chrome "' + path + '"'
+    else:
+        cmd = 'start explorer "' + path + '"'
+    os.system(cmd)
+    return cmd
+
+
+def open_local_file_linux(path):
+    ext = os.path.splitext(path)[1][1:]
+
+    wordList = ['doc', 'docm', 'docx', 'dot', 'dotm',
+                'dotx', 'mhtml', 'mht:', 'odt', 'rtf', 'txt']
+    excelList = ['csv', 'dbf', 'dif', 'ods', 'prn', 'xla', 'xls',
+                 'xlsb', 'xlsm', 'xlsx', 'xlt', 'xltm', 'xltx', 'xlw']
+    powerPointList = ['pot', 'potm',  'potx', 'ppa', 'ppam',
+                      'pps', 'ppsm', 'ppsx', 'ppt', 'pptm', 'pptx']
+    pdfList = ['pdf']
+    if ext in wordList:
+        cmd = 'libreoffice --writer "' + path + '"'
+    elif ext in excelList:
+        cmd = 'libreoffice --calc "' + path + '"'
+    elif ext in powerPointList:
+        cmd = 'libreoffice --impress "' + path + '"'
+    elif ext in pdfList:
+        cmd = 'start chrome "' + path + '"'
+    else:
+        cmd = 'nautilus "' + path + '"'
+
+    os.system(cmd)
+    return cmd
+
+
+def main_v2():
+    message = get_message_v2()
+    plt = platform.system()
+    if plt == "Windows":
+        first_char = message.path[0]
+        if first_char == '/':
+            local_path = message.path[1:]
+            if path.exists(local_path):
+                cmd = open_local_file_windows(local_path)
+                send_message_v2(encode_message(cmd))
+            else:
+                send_message_v2(encode_message("not found"))
+        else:
+            if path.exists('//' + message.path):
+                cmd = open_local_file_windows('\\\\' + message.path)
+                send_message_v2(encode_message(cmd))
+            else:
+                send_message_v2(encode_message("not found"))
+    elif plt == "Linux":
+        if path.exists(message.path):
+            cmd = open_local_file_linux(message.path)
+            send_message_v2(encode_message(cmd))
+        else:
+            send_message_v2(encode_message("not found"))
+    elif plt == "Darwin":
+        send_message_v2(encode_message(plt))
+    else:
+        send_message_v2(encode_message("Unidentified system"))
+
+
+def main_v3():
+    message = get_message_v3()
+    plt = platform.system()
+    if plt == "Windows":
+        first_char = message[0]
+        if first_char == '/':
+            local_path = message[1:]
+            if path.exists(local_path):
+                cmd = open_local_file_windows(local_path)
+                send_message_v3(cmd)
+            else:
+                send_message_v3("not found")
+        else:
+            if path.exists('//' + message):
+                cmd = open_local_file_windows('\\\\' + message)
+                send_message_v3(cmd)
+            else:
+                send_message_v3("not found")
+    elif plt == "Linux":
+        if path.exists('/' + message):
+            cmd = open_local_file_linux(message)
+            send_message_v3(cmd)
+        else:
+            send_message_v3("not found")
+    elif plt == "Darwin":
+        send_message_v3(plt)
+    else:
+        send_message_v3("Unidentified system")
+
+
+if __name__ == "__main__":
+    if sys.version_info.major == 3:
+        main_v3()
+    else:
+        main_v2()
